@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/FormBucket/koa-saml2-js/issues"
   },
-  "homepage": "https://github.com/FormBucket/koa-saml2-js#readme"
+  "homepage": "https://github.com/FormBucket/koa-saml2-js#readme",
+  "peerDependencies": {
+    "saml2-js": "^2.0.3"
+  }
 }
