@@ -2,6 +2,8 @@
 // Author: JC Fisher
 // Email: jcfisher007@gmail.com
 
+function KoaSamlHandler(ctx, saml_response);
+
 /**
  * The ServiceProvider options.
  */
@@ -27,6 +29,8 @@ interface KoaSaml2IdsOptions {
 interface KoaSaml2Input {
   sp_options: KoaSaml2SpOptions;
   ids_options: KoaSaml2IdpOptions;
+  onSamlResponse: KoaSamlHandler;
+  onLoginComplete: KoaSamlHandler;
 }
 
 /**

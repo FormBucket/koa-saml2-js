@@ -6,8 +6,24 @@ var saml2 = SAML2({ sp_options, idp_options })
 router.get('/metadata.xml', saml2.metadata);
 router.get('/saml/login', saml2.login);
 */
+const defaultHandleResponse = (ctx, saml_response) => {
+  if (!ctx.session) {
+    throw new Error("ctx.session must be configured. See koa-session.");
+  }
+  ctx.session.user = saml_response.user;
+};
 
-const koaSaml2 = ({ sp_options, idp_options }) => {
+const defaultLoginComplete = (ctx, saml_response) => {
+  ctx.body = `Hello ${saml_response.user.name_id}!`;
+};
+
+const koaSaml2 = ({
+  sp_options,
+  idp_options,
+  onSamlResponse = defaultHandleResponse,
+  onLoginComplete = defaultLoginComplete
+}) => {
+  console.log(sp_options, idp_options);
   var sp = new saml2.ServiceProvider(sp_options);
   var idp = new saml2.IdentityProvider(idp_options);
 
@@ -39,24 +55,25 @@ const koaSaml2 = ({ sp_options, idp_options }) => {
   }
 
   return {
-    metadata: async ctx => {
+    metadata: async (ctx, next) => {
       ctx.type = "application/xml";
       ctx.body = sp.create_metadata();
+      await next();
     },
-    login: async ctx => {
+    login: async (ctx, next) => {
       var login_url = await create_login_request_url();
       ctx.redirect(login_url);
+      await next();
     },
-    assert: async ctx => {
-      if (!ctx.session) {
-        throw new Error("ctx.session must be configured. See koa-session.");
-      }
-      var options = { request_body: req.body };
-      var saml_response = await postAssert(options);
-      ctx.session.user = saml_response.user;
-      ctx.body = "Hello #{saml_response.user.name_id}!";
+    assert: async (ctx, next) => {
+      var options = { request_body: ctx.request.body };
+      var saml_response = await post_assert(options);
+      ctx.log.debug({ saml_response }, "saml response");
+      onSamlResponse(ctx, saml_response);
+      onLoginComplete(ctx, saml_response);
+      await next();
     },
-    logout: async ctx => {
+    logout: async (ctx, next) => {
       var options = {
         name_id: name_id,
         session_index: session_index
@@ -64,6 +81,7 @@ const koaSaml2 = ({ sp_options, idp_options }) => {
 
       var logout_url = await create_login_request_url(options);
       ctx.redirect(logout_url);
+      await next();
     }
   };
 };

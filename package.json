@@ -1,6 +1,6 @@
 {
   "name": "koa-saml2-js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FormBucket/koa-saml2-js.git"
+    "url": "git+https://github.com/jcfisher007/koa-saml2-js.git"
   },
   "author": "JC Fisher",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/FormBucket/koa-saml2-js/issues"
+    "url": "https://github.com/jcfisher007/koa-saml2-js/issues"
   },
-  "homepage": "https://github.com/FormBucket/koa-saml2-js#readme",
+  "homepage": "https://github.com/jcfisher007/koa-saml2-js#readme",
   "peerDependencies": {
     "saml2-js": "^2.0.3"
   }
