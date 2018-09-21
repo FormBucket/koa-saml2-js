@@ -11,11 +11,10 @@ const defaultHandleResponse = (ctx, saml_response) => {
     throw new Error("ctx.session must be configured. See koa-session.");
   }
   ctx.session.user = saml_response.user;
-};
-
-const defaultLoginComplete = (ctx, saml_response) => {
   ctx.body = `Hello ${saml_response.user.name_id}!`;
 };
+
+const defaultLoginComplete = (ctx, saml_response) => {};
 
 const koaSaml2 = ({
   sp_options,
@@ -23,7 +22,6 @@ const koaSaml2 = ({
   onSamlResponse = defaultHandleResponse,
   onLoginComplete = defaultLoginComplete
 }) => {
-  console.log(sp_options, idp_options);
   var sp = new saml2.ServiceProvider(sp_options);
   var idp = new saml2.IdentityProvider(idp_options);
 
@@ -68,10 +66,9 @@ const koaSaml2 = ({
     assert: async (ctx, next) => {
       var options = { request_body: ctx.request.body };
       var saml_response = await post_assert(options);
-      ctx.log.debug({ saml_response }, "saml response");
       onSamlResponse(ctx, saml_response);
-      onLoginComplete(ctx, saml_response);
       await next();
+      onLoginComplete(ctx, saml_response);
     },
     logout: async (ctx, next) => {
       var options = {
