@@ -66,9 +66,9 @@ const koaSaml2 = ({
     assert: async (ctx, next) => {
       var options = { request_body: ctx.request.body };
       var saml_response = await post_assert(options);
-      onSamlResponse(ctx, saml_response);
+      await onSamlResponse(ctx, saml_response);
       await next();
-      onLoginComplete(ctx, saml_response);
+      await onLoginComplete(ctx, saml_response);
     },
     logout: async (ctx, next) => {
       var options = {
